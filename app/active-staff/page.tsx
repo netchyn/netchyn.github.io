@@ -8,6 +8,7 @@ import {
   ArrowUp,
   ArrowDown,
   FileText,
+  Check, // เพิ่ม Check icon
 } from "lucide-react";
 import {
   BarChart,
@@ -45,14 +46,13 @@ const REPORT_TYPES = [
 const DATE_RANGES = ["Today", "Last 7 Days", "This Month"];
 
 // --- MOCK DATA GENERATOR ---
-// จำลองข้อมูลประจำเดือน (เช่น ตุลาคม 2026)
 const generateDailyStats = () => {
   const data = [];
   for (let i = 1; i <= 30; i++) {
     data.push({
       date: `Oct ${i}, 2026`,
       dayNum: i,
-      "Number of Staff": Math.floor(Math.random() * 8) + 1, // สุ่ม 1-8 คนต่อวัน
+      "Number of Staff": Math.floor(Math.random() * 8) + 1,
     });
   }
   return data;
@@ -74,12 +74,10 @@ const generateStaffLogs = () => {
   for (let i = 1; i <= 50; i++) {
     const role = ROLES[Math.floor(Math.random() * ROLES.length)];
     const name = names[Math.floor(Math.random() * names.length)];
-    // สุ่มวันที่ในเดือนตุลาคม 2026
     const day = Math.floor(Math.random() * 30) + 1;
     const hour = Math.floor(Math.random() * 24);
     const min = Math.floor(Math.random() * 60);
 
-    // สร้าง String วันที่ให้อ่านง่าย
     const dateStr = `Oct ${day.toString().padStart(2, "0")}, 2026, ${hour
       .toString()
       .padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
@@ -90,7 +88,6 @@ const generateStaffLogs = () => {
       email: `${name.split(" ")[0].toLowerCase()}@hotel.com`,
       role: role,
       lastActiveStr: dateStr,
-      // ค่าตัวเลขสำหรับใช้เรียงลำดับ (Sort)
       timestamp: new Date(`2026-10-${day}T${hour}:${min}:00`).getTime(),
       dayNum: day,
     });
@@ -101,7 +98,7 @@ const generateStaffLogs = () => {
 const rawDailyStats = generateDailyStats();
 const rawStaffLogs = generateStaffLogs();
 
-// --- CUSTOM CHECKBOX DROPDOWN COMPONENT ---
+// --- CUSTOM CHECKBOX DROPDOWN COMPONENT (NEW DESIGN) ---
 const CheckboxDropdown = ({
   label,
   options,
@@ -160,7 +157,7 @@ const CheckboxDropdown = ({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-3 rounded cursor-pointer hover:border-slate-300 transition"
       >
-        <span className="truncate">{displayText}</span>
+        <span className="truncate capitalize">{displayText}</span>
         <ChevronDown
           className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -169,36 +166,67 @@ const CheckboxDropdown = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 top-[100%] left-0 mt-1 w-[240px] bg-white border border-slate-200 rounded shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 top-[100%] left-0 mt-1 w-[240px] bg-white border border-slate-200 rounded shadow-lg max-h-60 overflow-y-auto py-1">
           <div
-            className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-100"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100"
             onClick={handleAllClick}
           >
-            <input
-              type="checkbox"
-              checked={selected.length === 0}
-              readOnly
-              className="cursor-pointer w-4 h-4 accent-[#1e293b]"
-            />
-            <span className="text-sm font-medium text-slate-700">
+            <div
+              className={`
+              flex items-center justify-center w-[18px] h-[18px] rounded-[4px] border transition-colors shrink-0
+              ${
+                selected.length === 0
+                  ? "bg-[#1c2434] border-[#1c2434]"
+                  : "bg-white border-slate-400"
+              }
+            `}
+            >
+              {selected.length === 0 && (
+                <Check size={14} strokeWidth={3.5} className="text-white" />
+              )}
+            </div>
+            <span
+              className={`text-[15px] ${
+                selected.length === 0
+                  ? "font-semibold text-[#1c2434]"
+                  : "text-[#334155]"
+              }`}
+            >
               All {label}s
             </span>
           </div>
-          {options.map((opt) => (
-            <div
-              key={opt}
-              className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50 cursor-pointer"
-              onClick={() => handleOptionClick(opt)}
-            >
-              <input
-                type="checkbox"
-                checked={selected.length > 0 && selected.includes(opt)}
-                readOnly
-                className="cursor-pointer w-4 h-4 accent-[#1e293b]"
-              />
-              <span className="text-sm text-slate-700 capitalize">{opt}</span>
-            </div>
-          ))}
+          {options.map((opt) => {
+            const isChecked = selected.length > 0 && selected.includes(opt);
+            return (
+              <div
+                key={opt}
+                className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 cursor-pointer"
+                onClick={() => handleOptionClick(opt)}
+              >
+                <div
+                  className={`
+                  flex items-center justify-center w-[18px] h-[18px] rounded-[4px] border transition-colors shrink-0
+                  ${
+                    isChecked
+                      ? "bg-[#1c2434] border-[#1c2434]"
+                      : "bg-white border-slate-400"
+                  }
+                `}
+                >
+                  {isChecked && (
+                    <Check size={14} strokeWidth={3.5} className="text-white" />
+                  )}
+                </div>
+                <span
+                  className={`text-[15px] capitalize ${
+                    isChecked ? "font-medium text-[#1c2434]" : "text-[#334155]"
+                  }`}
+                >
+                  {opt}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -212,11 +240,17 @@ export default function ActiveStaffReportPage() {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const [reportType, setReportType] = useState("Active Staff Report");
-  const [dateRange, setDateRange] = useState("This Month");
-  const [filters, setFilters] = useState<{ roles: string[] }>({ roles: [] });
+  // เปลี่ยน State มารวมไว้ใน filters และทำเป็น Array เพื่อรองรับการเลือกหลายอัน
+  const [filters, setFilters] = useState<{
+    reportTypes: string[];
+    dateRanges: string[];
+    roles: string[];
+  }>({
+    reportTypes: [],
+    dateRanges: ["This Month"], // กำหนด Default ให้ Date Range เป็น This Month
+    roles: [],
+  });
 
-  // ระบบ SORT สำหรับตาราง
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "asc" | "desc" | null;
@@ -236,27 +270,39 @@ export default function ActiveStaffReportPage() {
     );
   }, []);
 
-  // กรองกราฟแท่ง (Bar Chart) ตามมุมมองสัปดาห์/เดือน
-  const filteredDailyStats = useMemo(() => {
-    // จำลองวันปัจจุบันคือวันที่ 30 ของเดือน
-    const currentDay = 30;
-    let startDay = 1;
+  // Text เอาไว้แสดงผลว่ากำลังเลือก Date Range อะไรอยู่
+  const displayDateRange =
+    filters.dateRanges.length === 0
+      ? "All Dates"
+      : filters.dateRanges.join(", ");
 
-    if (dateRange === "Today") startDay = currentDay;
-    else if (dateRange === "Last 7 Days") startDay = currentDay - 6;
+  const filteredDailyStats = useMemo(() => {
+    const currentDay = 30;
+    let startDay = 1; // Default = This Month (หรือ All)
+
+    // หาช่วงเวลาที่กว้างที่สุดจากตัวเลือกที่ถูกเลือก
+    if (filters.dateRanges.length > 0) {
+      if (filters.dateRanges.includes("This Month")) startDay = 1;
+      else if (filters.dateRanges.includes("Last 7 Days"))
+        startDay = currentDay - 6;
+      else if (filters.dateRanges.includes("Today")) startDay = currentDay;
+    }
 
     return rawDailyStats.filter(
       (d) => d.dayNum >= startDay && d.dayNum <= currentDay
     );
-  }, [dateRange]);
+  }, [filters.dateRanges]);
 
-  // กรองข้อมูลสตาฟ (Table & Pie Chart)
   const filteredStaffLogs = useMemo(() => {
     const currentDay = 30;
-    let startDay = 1;
+    let startDay = 1; // Default = This Month (หรือ All)
 
-    if (dateRange === "Today") startDay = currentDay;
-    else if (dateRange === "Last 7 Days") startDay = currentDay - 6;
+    if (filters.dateRanges.length > 0) {
+      if (filters.dateRanges.includes("This Month")) startDay = 1;
+      else if (filters.dateRanges.includes("Last 7 Days"))
+        startDay = currentDay - 6;
+      else if (filters.dateRanges.includes("Today")) startDay = currentDay;
+    }
 
     return rawStaffLogs.filter((row) => {
       const matchDate = row.dayNum >= startDay && row.dayNum <= currentDay;
@@ -264,9 +310,8 @@ export default function ActiveStaffReportPage() {
         filters.roles.length === 0 || filters.roles.includes(row.role);
       return matchDate && matchRole;
     });
-  }, [dateRange, filters]);
+  }, [filters.dateRanges, filters.roles]);
 
-  // เตรียมข้อมูลสำหรับ Pie Chart
   const pieData = useMemo(() => {
     const roleCounts: Record<string, number> = {};
     filteredStaffLogs.forEach((log) => {
@@ -279,7 +324,6 @@ export default function ActiveStaffReportPage() {
     }));
   }, [filteredStaffLogs]);
 
-  // ประมวลผลและเรียงลำดับตาราง
   const tableData = useMemo(() => {
     let sortedArray = [...filteredStaffLogs];
 
@@ -327,11 +371,13 @@ export default function ActiveStaffReportPage() {
   };
 
   const resetFilters = () => {
-    setDateRange("This Month");
-    setFilters({ roles: [] });
+    setFilters({
+      reportTypes: [],
+      dateRanges: ["This Month"],
+      roles: [],
+    });
   };
 
-  // --- EXPORT FUNCTIONS ---
   const exportCSV = () => {
     const headers = ["Order", "Name", "Email", "Role", "Last Active Time"];
     const rows = tableData.map((row) => [
@@ -408,7 +454,6 @@ export default function ActiveStaffReportPage() {
 
   if (!isMounted) return null;
 
-  // หาข้อมูลสรุป (Unique Staff count)
   const uniqueStaffCount = new Set(filteredStaffLogs.map((log) => log.name))
     .size;
 
@@ -475,54 +520,34 @@ export default function ActiveStaffReportPage() {
           className="flex flex-wrap gap-4 items-end mb-4 pb-4 border-b border-slate-200"
           data-html2canvas-ignore="true"
         >
-          {/* Report Type Dropdown */}
-          <div className="w-56">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Report Type
-            </label>
-            <div className="relative">
-              <select
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                {REPORT_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
+          {/* Report Type Filter */}
+          <CheckboxDropdown
+            label="Report Type"
+            options={REPORT_TYPES}
+            selected={filters.reportTypes}
+            onChange={(val: string[]) =>
+              setFilters((prev) => ({ ...prev, reportTypes: val }))
+            }
+          />
 
-          {/* Date Range Dropdown (Week/Month View Control) */}
-          <div className="w-40">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Date Range
-            </label>
-            <div className="relative">
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                {DATE_RANGES.map((dr) => (
-                  <option key={dr} value={dr}>
-                    {dr}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
+          {/* Date Range Filter */}
+          <CheckboxDropdown
+            label="Date Range"
+            options={DATE_RANGES}
+            selected={filters.dateRanges}
+            onChange={(val: string[]) =>
+              setFilters((prev) => ({ ...prev, dateRanges: val }))
+            }
+          />
 
           {/* Role Filter */}
           <CheckboxDropdown
             label="Role"
             options={ROLES}
             selected={filters.roles}
-            onChange={(val) => setFilters({ roles: val })}
+            onChange={(val: string[]) =>
+              setFilters((prev) => ({ ...prev, roles: val }))
+            }
           />
 
           <button
@@ -568,8 +593,11 @@ export default function ActiveStaffReportPage() {
               <Clock size={14} /> Selected View
             </p>
             <div>
-              <p className="text-4xl font-bold text-[#22c55e] mb-2">
-                {dateRange}
+              <p
+                className="text-3xl font-bold text-[#22c55e] mb-2 truncate"
+                title={displayDateRange}
+              >
+                {displayDateRange}
               </p>
               <p className="text-sm text-slate-500 font-medium print:hidden">
                 Affects charts & table below
@@ -583,8 +611,8 @@ export default function ActiveStaffReportPage() {
           {/* BAR CHART: DAILY ACTIVE STAFF */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col page-break-inside-avoid">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase">
-                Daily Active Staff - {dateRange}
+              <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase truncate">
+                Daily Active Staff - {displayDateRange}
               </h3>
             </div>
             <div className="p-6 h-80">
@@ -640,8 +668,8 @@ export default function ActiveStaffReportPage() {
           {/* PIE CHART: ACTIVE STAFF BY ROLES */}
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col page-break-inside-avoid">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase">
-                Active Staff By Roles - {dateRange}
+              <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase truncate">
+                Active Staff By Roles - {displayDateRange}
               </h3>
             </div>
             <div className="p-6 h-80 flex flex-col items-center justify-center">
@@ -656,7 +684,9 @@ export default function ActiveStaffReportPage() {
                       outerRadius={100}
                       paddingAngle={2}
                       dataKey="value"
-                      label={({ percent = 0 }) => `${(percent * 100).toFixed(0)}%`}
+                      label={({ percent = 0 }) =>
+                        `${(percent * 100).toFixed(0)}%`
+                      }
                       labelLine={false}
                     >
                       {pieData.map((entry, index) => (
@@ -696,8 +726,11 @@ export default function ActiveStaffReportPage() {
             <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase">
               Staff Last Active Time
             </h3>
-            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
-              Showing logs for: {dateRange}
+            <span
+              className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded truncate max-w-[200px]"
+              title={displayDateRange}
+            >
+              Showing logs for: {displayDateRange}
             </span>
           </div>
           <div className="overflow-x-auto">

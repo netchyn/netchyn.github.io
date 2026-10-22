@@ -487,7 +487,7 @@ export default function ServiceRequestSummaryPage() {
                   }}
                   className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition border-t border-slate-100"
                 >
-                  Export as CSV (Table Data)
+                  Export as CSV
                 </button>
               </div>
             )}
