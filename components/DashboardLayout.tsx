@@ -20,10 +20,15 @@ import {
 } from "lucide-react";
 
 const SIDEBAR_TOP_ITEMS = [
-  //   { icon: LayoutDashboard, label: "Home", route: "/" },
-  { icon: MessageSquare, label: "Chat dashboard", route: "/chat-1" },
-  { icon: MessageSquare, label: "Chat 2", route: "/chat-2" }, // เปลี่ยนเป็น /chat-2 ตามที่คุยกัน
-  //   { icon: Map, label: "Request mapping", route: "/mapping" },
+  { icon: LayoutDashboard, label: "Home", route: "/" }, // <-- Uncommented this line
+  { icon: MessageSquare, label: "Messages & Conversations", route: "/chat-1" },
+  { icon: MessageSquare, label: "Message Peak Hours", route: "/chat-2" },
+  {
+    icon: MessageSquare,
+    label: "Service Request Summary",
+    route: "/service-request",
+  },
+  { icon: MessageSquare, label: "Active Staff Report", route: "/active-staff" },
 ];
 
 const SIDEBAR_ADMIN_ITEMS = [
@@ -41,10 +46,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const pathname = usePathname(); // ใช้เช็คว่าอยู่หน้าไหนใน Next.js
+  const pathname = usePathname();
 
   const NavItem = ({ icon: Icon, label, route }: any) => {
-    const isActive = pathname === route; // เช็คจาก URL จริง
+    const isActive = pathname === route;
     return (
       <Link
         href={route}
@@ -86,15 +91,9 @@ export default function DashboardLayout({
         <div className="p-6 pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase mb-0.5">
-                Minor Hotels
-              </p>
               <h2 className="text-xl font-bold text-white tracking-tight leading-none mb-1">
-                RoomsChat
+                HOME
               </h2>
-              <p className="text-[10px] font-semibold tracking-widest text-slate-500 uppercase">
-                Staff Portal
-              </p>
             </div>
             <button
               className="md:hidden"
@@ -111,14 +110,6 @@ export default function DashboardLayout({
               <NavItem key={idx} {...item} />
             ))}
           </div>
-          {/* <div>
-            <p className="px-6 text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3 mt-6">
-              Admin
-            </p>
-            {SIDEBAR_ADMIN_ITEMS.map((item, idx) => (
-              <NavItem key={idx} {...item} />
-            ))}
-          </div> */}
         </nav>
       </div>
 
@@ -171,7 +162,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* View Renderer (เปลี่ยนจาก State มาเป็น Render Children แทน) */}
+        {/* View Renderer */}
         <main className="flex-1 overflow-hidden relative">{children}</main>
       </div>
     </div>

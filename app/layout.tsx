@@ -6,8 +6,8 @@ import DashboardLayout from "@/components/DashboardLayout"; // ตรวจส�
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RoomsChat Dashboard",
-  description: "Hotel messaging dashboard",
+  title: "report",
+  description: "report",
 };
 
 export default function RootLayout({

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 13, "column": 0}, "map": {"version":3,"sources":["file:///Users/net/working/netchyn.github.io/app/favicon.ico.mjs%20(structured%20image%20object)"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 48, height: 48 }\n"],"names":["src","width","height"],"mappings":";;;;AAAA;;uCACe;IAAEA,KAAAA,mIAAG;IAAEC,OAAO;IAAIC,QAAQ;AAAG"}},
-    {"offset": {"line": 28, "column": 0}, "map": {"version":3,"sources":["file:///Users/net/working/netchyn.github.io/app/page.tsx"],"sourcesContent":["import { Inbox } from \"lucide-react\";\n\nexport default function Home() {\n  return (\n    <div className=\"flex flex-col items-center justify-center h-full text-slate-500 bg-[#f8fafc] py-20\">\n      <div className=\"p-4 bg-slate-200/50 rounded-full mb-4\">\n        <Inbox size={48} className=\"text-slate-400\" />\n      </div>\n      <h2 className=\"text-2xl font-semibold text-slate-800 mb-2\">Workspace</h2>\n      <p>\n        Welcome to your workspace. Select a dashboard from the sidebar to begin.\n      </p>\n    </div>\n  );\n}\n"],"names":["Home","className","size"],"mappings":";;;;;AAAA;;;AAEe,SAASA;IACtB,qBACE,8OAAC;QAAIC,WAAU;;0BACb,8OAAC;gBAAIA,WAAU;0BACb,cAAA,8OAAC,8MAAK;oBAACC,MAAM;oBAAID,WAAU;;;;;;;;;;;0BAE7B,8OAAC;gBAAGA,WAAU;0BAA6C;;;;;;0BAC3D,8OAAC;0BAAE;;;;;;;;;;;;AAKT"}}]
-}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronDown, Inbox } from "lucide-react";
 import {
   BarChart,
@@ -14,6 +14,8 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { toPng } from "html-to-image";
+import jsPDF from "jspdf";
 
 // --- CONSTANTS & CONFIG ---
 const RESPONSE_LEVELS = {
@@ -26,15 +28,19 @@ const RESPONSE_LEVELS = {
 
 const PIE_COLORS = ["#10b981", "#f59e0b", "#f97316", "#ef4444", "#6b7280"];
 
+const MONTHS = ["Jan 2026", "Feb 2026", "Mar 2026"];
+const PLATFORMS = ["iOS", "Android"];
+const AUTOMATED_OPTIONS = ["Automated", "Non-Automated"];
+const RESPONSE_LEVEL_OPTIONS = Object.entries(RESPONSE_LEVELS).map(
+  ([k, v]) => `${k} - ${v}`
+);
+
 // --- MOCK DATA GENERATOR ---
 const generateMockData = () => {
   const data = [];
-  const platforms = ["iOS", "Android"];
-  const months = ["Jan 2026", "Feb 2026", "Mar 2026"];
-
   for (let i = 1; i <= 300; i++) {
-    const platform = platforms[Math.floor(Math.random() * platforms.length)];
-    const month = months[Math.floor(Math.random() * months.length)];
+    const platform = PLATFORMS[Math.floor(Math.random() * PLATFORMS.length)];
+    const month = MONTHS[Math.floor(Math.random() * MONTHS.length)];
     const isAuto = Math.random() > 0.8;
     const isNoResponse = Math.random() > 0.9;
 
@@ -70,7 +76,7 @@ const generateMockData = () => {
 
 const rawData = generateMockData();
 
-// --- HELPER FUNCTIONS ---
+// --- HELPER FUNCTIONS & COMPONENTS ---
 const formatTime = (totalSeconds: number | null) => {
   if (totalSeconds === null || isNaN(totalSeconds)) return "N/A";
   const h = Math.floor(totalSeconds / 3600);
@@ -97,17 +103,125 @@ const EmptyPage = ({
   </div>
 );
 
+// --- CUSTOM CHECKBOX DROPDOWN COMPONENT ---
+const CheckboxDropdown = ({
+  label,
+  options,
+  selected,
+  onChange,
+}: {
+  label: string;
+  options: string[];
+  selected: string[];
+  onChange: (val: string[]) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // ปิด Dropdown เมื่อคลิกพื้นที่อื่น
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleOptionClick = (option: string) => {
+    if (selected.length === 0) {
+      // ถ้าเดิมเลือก All อยู่ เมื่อติ๊กอันใดอันหนึ่ง จะให้เหลือแค่อันนั้น
+      onChange([option]);
+    } else if (selected.includes(option)) {
+      // ยกเลิกการเลือก
+      const newSelected = selected.filter((item) => item !== option);
+      onChange(newSelected);
+    } else {
+      // เพิ่มการเลือก
+      onChange([...selected, option]);
+    }
+  };
+
+  const handleAllClick = () => {
+    onChange([]); // Array ว่างหมายถึง All
+  };
+
+  const displayText =
+    selected.length === 0
+      ? `All ${label}s`
+      : selected.length === 1
+      ? selected[0].length > 15
+        ? `${selected[0].substring(0, 15)}...`
+        : selected[0]
+      : `${selected.length} Selected`;
+
+  return (
+    <div className="w-48 relative" ref={dropdownRef}>
+      <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
+        {label}
+      </label>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-3 rounded cursor-pointer hover:border-slate-300 transition"
+      >
+        <span className="truncate">{displayText}</span>
+        <ChevronDown
+          className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-50 top-[100%] left-0 mt-1 w-[240px] bg-white border border-slate-200 rounded shadow-lg max-h-60 overflow-y-auto">
+          <div
+            className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-100"
+            onClick={handleAllClick}
+          >
+            <input
+              type="checkbox"
+              checked={selected.length === 0}
+              readOnly
+              className="cursor-pointer w-4 h-4 accent-[#1e293b]"
+            />
+            <span className="text-sm font-medium text-slate-700">
+              All {label}s
+            </span>
+          </div>
+          {options.map((opt) => (
+            <div
+              key={opt}
+              className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50 cursor-pointer"
+              onClick={() => handleOptionClick(opt)}
+            >
+              <input
+                type="checkbox"
+                checked={selected.length > 0 && selected.includes(opt)}
+                readOnly
+                className="cursor-pointer w-4 h-4 accent-[#1e293b]"
+              />
+              <span className="text-sm text-slate-700">{opt}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // --- MAIN PAGE COMPONENT ---
 export default function Chat1Page() {
   const [currentDate, setCurrentDate] = useState<string>("");
-
-  // 1. เพิ่ม State เช็คการ Mount
   const [isMounted, setIsMounted] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    // 2. สั่งให้บอกว่า Component โหลดบน Client เรียบร้อยแล้ว
     setIsMounted(true);
-
     setCurrentDate(
       new Date().toLocaleDateString("en-US", {
         weekday: "long",
@@ -117,27 +231,40 @@ export default function Chat1Page() {
     );
   }, []);
 
-  const [filters, setFilters] = useState({
-    month: "All",
-    platform: "All",
-    responseLevel: "All",
-    automated: "All",
+  // ใช้ Array ในการเก็บข้อมูล Filter
+  const [filters, setFilters] = useState<{
+    months: string[];
+    platforms: string[];
+    responseLevels: string[];
+    automated: string[];
+  }>({
+    months: [],
+    platforms: [],
+    responseLevels: [],
+    automated: [],
   });
 
   const filteredData = useMemo(() => {
     return rawData.filter((row) => {
-      const matchMonth = filters.month === "All" || row.month === filters.month;
+      const matchMonth =
+        filters.months.length === 0 || filters.months.includes(row.month);
       const matchPlatform =
-        filters.platform === "All" || row.platform === filters.platform;
-      const matchLevel =
-        filters.responseLevel === "All" ||
-        row.responseLevel.toString() === filters.responseLevel;
+        filters.platforms.length === 0 ||
+        filters.platforms.includes(row.platform);
 
+      // กรอง Response Level (เทียบแค่ตัวเลขตัวแรก)
+      const matchLevel =
+        filters.responseLevels.length === 0 ||
+        filters.responseLevels.some((lvlStr) =>
+          lvlStr.startsWith(row.responseLevel.toString())
+        );
+
+      // กรอง Automated
       let matchAuto = true;
-      if (filters.automated === "Automated")
-        matchAuto = row.isAutomated === true;
-      if (filters.automated === "Non-Automated")
-        matchAuto = row.isAutomated === false;
+      if (filters.automated.length > 0) {
+        const isAutoStr = row.isAutomated ? "Automated" : "Non-Automated";
+        matchAuto = filters.automated.includes(isAutoStr);
+      }
 
       return matchMonth && matchPlatform && matchLevel && matchAuto;
     });
@@ -238,7 +365,7 @@ export default function Chat1Page() {
     return sortedArray.map((row: any, index) => ({
       order: index + 1,
       month: row.month,
-      // @ts-ignore - แก้ไขการใส่ตัวแปรให้ถูกต้อง
+      // @ts-ignore
       levelLabel: `${row.level} - ${RESPONSE_LEVELS[row.level]}`,
       conversations: row.convs,
       messages: row.msgs,
@@ -246,26 +373,118 @@ export default function Chat1Page() {
     }));
   }, [filteredData]);
 
-  const handleFilterChange = (e: any) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
   const resetFilters = () => {
     setFilters({
-      month: "All",
-      platform: "All",
-      responseLevel: "All",
-      automated: "All",
+      months: [],
+      platforms: [],
+      responseLevels: [],
+      automated: [],
     });
   };
 
+  // --- EXPORT FUNCTIONS ---
+  const exportCSV = () => {
+    const headers = [
+      "Order",
+      "Month",
+      "Response Level",
+      "Conversations",
+      "Messages",
+      "AVG Response Time",
+    ];
+
+    const rows = tableData.map((row: any) => [
+      row.order,
+      row.month,
+      row.levelLabel,
+      row.conversations,
+      row.messages,
+      formatTime(row.avgTime),
+    ]);
+
+    rows.push([
+      "Grand Total",
+      "",
+      "",
+      metrics.conversations,
+      metrics.messages,
+      formatTime(metrics.avgRespTime),
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((r) => r.map((item) => `"${item}"`).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Engagement_Data_${currentDate}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportPDF = async () => {
+    setIsExporting(true);
+    const element = document.getElementById("pdf-export-area");
+
+    if (element) {
+      try {
+        const originalOverflow = element.style.overflow;
+        const originalHeight = element.style.height;
+
+        element.style.overflow = "visible";
+        element.style.height = "auto";
+
+        const canvasWidth = element.scrollWidth;
+        const canvasHeight = element.scrollHeight;
+
+        const imgData = await toPng(element, {
+          quality: 1,
+          pixelRatio: 2,
+          backgroundColor: "#f8fafc",
+          width: canvasWidth,
+          height: canvasHeight,
+          filter: (node) => {
+            if (node instanceof HTMLElement) {
+              return node.dataset.html2canvasIgnore !== "true";
+            }
+            return true;
+          },
+        });
+
+        element.style.overflow = originalOverflow;
+        element.style.height = originalHeight;
+
+        const pdfWidth = 210;
+        const pdfHeight = (canvasHeight * pdfWidth) / canvasWidth;
+
+        const pdf = new jsPDF({
+          orientation: "p",
+          unit: "mm",
+          format: [pdfWidth, pdfHeight],
+        });
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Engagement_Data_${currentDate}.pdf`);
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+      }
+    }
+    setIsExporting(false);
+  };
+
   if (!isMounted) {
-    return null; // หรือ return <div className="h-full bg-[#f8fafc]"></div> เพื่อกันหน้าจอกระพริบ
+    return null;
   }
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-[#f8fafc]">
+    <div
+      id="pdf-export-area"
+      className="flex flex-col h-full overflow-y-auto bg-[#f8fafc]"
+    >
       {/* PAGE HEADER */}
       <div className="px-8 pt-8 pb-4">
         <div className="flex justify-between items-end mb-6">
@@ -277,94 +496,84 @@ export default function Chat1Page() {
               Messages & Conversations
             </h1>
           </div>
-          <div className="flex gap-4">
-            <button className="px-6 py-2.5 bg-[#1e293b] text-white text-sm font-medium rounded shadow-sm hover:bg-slate-800 transition">
-              EXPORT DATA
+
+          {/* EXPORT DROPDOWN */}
+          <div className="relative" data-html2canvas-ignore="true">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={isExporting}
+              className="px-6 py-2.5 bg-[#1e293b] text-white text-sm font-medium rounded shadow-sm hover:bg-slate-800 transition flex items-center gap-2 disabled:opacity-50"
+            >
+              {isExporting ? "GENERATING..." : "EXPORT DATA"}
+              <ChevronDown
+                size={16}
+                className={`transition-transform duration-200 ${
+                  showExportMenu ? "rotate-180" : ""
+                }`}
+              />
             </button>
-            <button className="px-6 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded shadow-sm hover:bg-slate-50 transition">
-              MANAGE SETTINGS
-            </button>
+
+            {showExportMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded shadow-lg z-50 overflow-hidden">
+                <button
+                  onClick={() => {
+                    exportPDF();
+                    setShowExportMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Export as PDF
+                </button>
+                <button
+                  onClick={() => {
+                    exportCSV();
+                    setShowExportMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition border-t border-slate-100"
+                >
+                  Export as CSV (Table Data)
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* FILTERS */}
-        <div className="flex flex-wrap gap-4 items-end mb-4 pb-4 border-b border-slate-200">
-          <div className="w-48">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Month
-            </label>
-            <div className="relative">
-              <select
-                name="month"
-                value={filters.month}
-                onChange={handleFilterChange}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                <option value="All">All Months</option>
-                <option value="Jan 2026">Jan 2026</option>
-                <option value="Feb 2026">Feb 2026</option>
-                <option value="Mar 2026">Mar 2026</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
-          <div className="w-48">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Platform
-            </label>
-            <div className="relative">
-              <select
-                name="platform"
-                value={filters.platform}
-                onChange={handleFilterChange}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                <option value="All">All Platforms</option>
-                <option value="iOS">iOS</option>
-                <option value="Android">Android</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
-          <div className="w-48">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Response Level
-            </label>
-            <div className="relative">
-              <select
-                name="responseLevel"
-                value={filters.responseLevel}
-                onChange={handleFilterChange}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                <option value="All">All Levels</option>
-                {Object.entries(RESPONSE_LEVELS).map(([k, v]) => (
-                  <option key={k} value={k}>
-                    Level {k}: {v}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
-          <div className="w-48">
-            <label className="block text-[10px] font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-              Automated
-            </label>
-            <div className="relative">
-              <select
-                name="automated"
-                value={filters.automated}
-                onChange={handleFilterChange}
-                className="w-full appearance-none bg-white border border-slate-200 text-sm text-slate-700 py-2 pl-3 pr-8 rounded focus:outline-none focus:border-slate-400"
-              >
-                <option value="All">All Responses</option>
-                <option value="Automated">Automated Only</option>
-                <option value="Non-Automated">Non-Automated Only</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
+        {/* MULTI-SELECT FILTERS */}
+        <div
+          className="flex flex-wrap gap-4 items-end mb-4 pb-4 border-b border-slate-200"
+          data-html2canvas-ignore="true"
+        >
+          <CheckboxDropdown
+            label="Month"
+            options={MONTHS}
+            selected={filters.months}
+            onChange={(val) => setFilters((prev) => ({ ...prev, months: val }))}
+          />
+          <CheckboxDropdown
+            label="Platform"
+            options={PLATFORMS}
+            selected={filters.platforms}
+            onChange={(val) =>
+              setFilters((prev) => ({ ...prev, platforms: val }))
+            }
+          />
+          <CheckboxDropdown
+            label="Response Level"
+            options={RESPONSE_LEVEL_OPTIONS}
+            selected={filters.responseLevels}
+            onChange={(val) =>
+              setFilters((prev) => ({ ...prev, responseLevels: val }))
+            }
+          />
+          <CheckboxDropdown
+            label="Type"
+            options={AUTOMATED_OPTIONS}
+            selected={filters.automated}
+            onChange={(val) =>
+              setFilters((prev) => ({ ...prev, automated: val }))
+            }
+          />
+
           <button
             onClick={resetFilters}
             className="text-sm font-medium text-slate-500 hover:text-slate-800 transition py-2 px-2"
@@ -444,7 +653,7 @@ export default function Chat1Page() {
 
           {/* CHARTS */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col page-break-inside-avoid">
               <div className="px-6 py-4 border-b border-slate-100">
                 <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase">
                   Platform Breakdown · Selected Period
@@ -500,7 +709,7 @@ export default function Chat1Page() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col page-break-inside-avoid">
               <div className="px-6 py-4 border-b border-slate-100">
                 <h3 className="text-[11px] font-semibold text-slate-800 tracking-widest uppercase">
                   Response Level Breakdown
@@ -518,6 +727,7 @@ export default function Chat1Page() {
                         `${(percent * 100).toFixed(0)}%`
                       }
                       outerRadius={100}
+                      innerRadius={60}
                       fill="#8884d8"
                       dataKey="value"
                     >
@@ -557,10 +767,10 @@ export default function Chat1Page() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-slate-100 text-slate-500">
+                <thead className="border-b border-slate-100 text-slate-500 bg-white">
                   <tr>
                     <th className="px-6 py-3 font-normal text-xs uppercase tracking-wider">
-                      Order
+                      NO.
                     </th>
                     <th className="px-6 py-3 font-normal text-xs uppercase tracking-wider">
                       Month
