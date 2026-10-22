@@ -2,12 +2,10 @@
   "version": 4,
   "routes": {
     "/": {
-      "renderingMode": "PARTIALLY_STATIC",
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 12357,
-      "experimentalPPR": true,
+      "htmlSize": 12604,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -17,17 +15,11 @@
           "type": "header",
           "key": "content-type",
           "value": "multipart/form-data;.*"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(?:[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight).*"
         }
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/",
       "dataRoute": "/index.rsc",
-      "prefetchDataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -38,12 +30,10 @@
       ]
     },
     "/_global-error": {
-      "renderingMode": "PARTIALLY_STATIC",
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 9541,
-      "experimentalPPR": true,
+      "htmlSize": 9366,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -53,17 +43,11 @@
           "type": "header",
           "key": "content-type",
           "value": "multipart/form-data;.*"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(?:[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight).*"
         }
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/_global-error",
       "dataRoute": "/_global-error.rsc",
-      "prefetchDataRoute": "/_global-error.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -75,12 +59,10 @@
     },
     "/_not-found": {
       "initialStatus": 404,
-      "renderingMode": "PARTIALLY_STATIC",
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 13326,
-      "experimentalPPR": true,
+      "htmlSize": 13418,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -90,17 +72,11 @@
           "type": "header",
           "key": "content-type",
           "value": "multipart/form-data;.*"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(?:[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight).*"
         }
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/_not-found",
       "dataRoute": "/_not-found.rsc",
-      "prefetchDataRoute": "/_not-found.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -111,12 +87,10 @@
       ]
     },
     "/chat-1": {
-      "renderingMode": "PARTIALLY_STATIC",
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 11615,
-      "experimentalPPR": true,
+      "htmlSize": 12050,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -126,17 +100,11 @@
           "type": "header",
           "key": "content-type",
           "value": "multipart/form-data;.*"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(?:[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight).*"
         }
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/chat-1",
       "dataRoute": "/chat-1.rsc",
-      "prefetchDataRoute": "/chat-1.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -147,12 +115,10 @@
       ]
     },
     "/chat-2": {
-      "renderingMode": "PARTIALLY_STATIC",
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 11831,
-      "experimentalPPR": true,
+      "htmlSize": 12055,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -162,17 +128,11 @@
           "type": "header",
           "key": "content-type",
           "value": "multipart/form-data;.*"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(?:[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight).*"
         }
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/chat-2",
       "dataRoute": "/chat-2.rsc",
-      "prefetchDataRoute": "/chat-2.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -188,7 +148,6 @@
         "content-type": "image/x-icon",
         "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
       },
-      "renderingMode": "STATIC",
       "routeType": "route",
       "response": "complete",
       "compute": "static",

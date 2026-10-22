@@ -1,19 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
+  output: 'export',
+  images: {
+    unoptimized: true, // แนะนำให้ใส่ไว้หากมีการใช้งาน <Image /> ของ Next.js เพราะ GitHub Pages ไม่รองรับ Image Optimization
   },
 };
 
 export default nextConfig;
-
-import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());

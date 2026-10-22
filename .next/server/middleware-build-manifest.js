@@ -7,14 +7,14 @@ globalThis.__BUILD_MANIFEST = {
     "static/chunks/0cz1d0mv5g_q7.js"
   ],
   "lowPriorityFiles": [
-    "static/-UCe39ELzVT2lXrggKbo_/_buildManifest.js",
-    "static/-UCe39ELzVT2lXrggKbo_/_ssgManifest.js",
-    "static/-UCe39ELzVT2lXrggKbo_/_clientMiddlewareManifest.js"
+    "static/WjS5eo78aKaHGSpEoofrG/_buildManifest.js",
+    "static/WjS5eo78aKaHGSpEoofrG/_ssgManifest.js",
+    "static/WjS5eo78aKaHGSpEoofrG/_clientMiddlewareManifest.js"
   ],
   "rootMainFiles": [
     "static/chunks/1ioodswbokfin.js",
-    "static/chunks/42gnwh73s2knv.js",
-    "static/chunks/1vo0wohvofgd7.js",
+    "static/chunks/1szo8wfhs0qx6.js",
+    "static/chunks/2khxl0v1q4i6n.js",
     "static/chunks/turbopack-3-ry682tkyiqk.js"
   ],
   "rootMainFilesTree": {},
@@ -22,8 +22,8 @@ globalThis.__BUILD_MANIFEST = {
     "/page": {
       "otherChunks": [
         "static/chunks/1ioodswbokfin.js",
-        "static/chunks/42gnwh73s2knv.js",
-        "static/chunks/1vo0wohvofgd7.js"
+        "static/chunks/1szo8wfhs0qx6.js",
+        "static/chunks/2khxl0v1q4i6n.js"
       ],
       "runtimeModuleIds": [
         94553
@@ -32,8 +32,8 @@ globalThis.__BUILD_MANIFEST = {
     "/_not-found/page": {
       "otherChunks": [
         "static/chunks/1ioodswbokfin.js",
-        "static/chunks/42gnwh73s2knv.js",
-        "static/chunks/1vo0wohvofgd7.js"
+        "static/chunks/1szo8wfhs0qx6.js",
+        "static/chunks/2khxl0v1q4i6n.js"
       ],
       "runtimeModuleIds": [
         94553
@@ -42,8 +42,8 @@ globalThis.__BUILD_MANIFEST = {
     "/_global-error/page": {
       "otherChunks": [
         "static/chunks/1ioodswbokfin.js",
-        "static/chunks/42gnwh73s2knv.js",
-        "static/chunks/1vo0wohvofgd7.js"
+        "static/chunks/1szo8wfhs0qx6.js",
+        "static/chunks/2khxl0v1q4i6n.js"
       ],
       "runtimeModuleIds": [
         94553
@@ -52,8 +52,8 @@ globalThis.__BUILD_MANIFEST = {
     "/chat-1/page": {
       "otherChunks": [
         "static/chunks/1ioodswbokfin.js",
-        "static/chunks/42gnwh73s2knv.js",
-        "static/chunks/1vo0wohvofgd7.js"
+        "static/chunks/1szo8wfhs0qx6.js",
+        "static/chunks/2khxl0v1q4i6n.js"
       ],
       "runtimeModuleIds": [
         94553
@@ -62,8 +62,8 @@ globalThis.__BUILD_MANIFEST = {
     "/chat-2/page": {
       "otherChunks": [
         "static/chunks/1ioodswbokfin.js",
-        "static/chunks/42gnwh73s2knv.js",
-        "static/chunks/1vo0wohvofgd7.js"
+        "static/chunks/1szo8wfhs0qx6.js",
+        "static/chunks/2khxl0v1q4i6n.js"
       ],
       "runtimeModuleIds": [
         94553
