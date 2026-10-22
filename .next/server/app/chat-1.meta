@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "headers": {
+    "link": "</_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\"",
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/chat-1/layout,_N_T_/chat-1/page,_N_T_/chat-1"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/chat-1/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 49216,
+    "slots": {
+      "children": {
+        "hints": 49248,
+        "slots": {
+          "children": {
+            "hints": 49312,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/0a72ea36fdd0db99ba050f3a20bdf290a84aed87e7066c971b4b04c0dd31c666/$/chat-1",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/chat-1/page"
+    },
+    "isFallback": false
+  }
+}
