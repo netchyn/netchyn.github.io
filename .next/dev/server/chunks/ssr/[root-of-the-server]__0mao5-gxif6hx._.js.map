@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///Users/net/working/netchyn.github.io/app/chat-2/page.tsx"],"sourcesContent":["export default function Chat2() {\n    return (\n      <div>\n        <h1 className=\"text-2xl font-bold text-gray-800 mb-4\">Chat 2</h1>\n        <p className=\"text-gray-600\">หน้านี้เป็นหน้าว่างๆ สำหรับเตรียมทำเนื้อหาแชทที่ 2</p>\n      </div>\n    );\n  }"],"names":["Chat2","className"],"mappings":";;;;;;AAAe,SAASA;IACpB,qBACE,8OAAC;;0BACC,8OAAC;gBAAGC,WAAU;0BAAwC;;;;;;0BACtD,8OAAC;gBAAEA,WAAU;0BAAgB;;;;;;;;;;;;AAGnC"}},
+    {"offset": {"line": 53, "column": 0}, "map": {"version":3,"sources":["file:///Users/net/working/netchyn.github.io/app/favicon.ico.mjs%20(structured%20image%20object)"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 48, height: 48 }\n"],"names":["src","width","height"],"mappings":";;;;AAAA;;uCACe;IAAEA,KAAAA,mIAAG;IAAEC,OAAO;IAAIC,QAAQ;AAAG"}}]
+}
